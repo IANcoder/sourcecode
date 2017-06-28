@@ -1,5 +1,7 @@
 package com.cloudbeaver;
 
+import com.cloudbeaver.checkAndAppend.CheckAndAppendDataTest;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        CheckAndAppendDataTest test = new CheckAndAppendDataTest();
+        test.start();
     }
 }

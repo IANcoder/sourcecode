@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-4.3.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">         
+
+	<bean id="TableUploadUrl" class="java.lang.String">
+		<constructor-arg value="upload://table/bcdfb940-9118-11e6-93c6-d33ad3c1d179/i8DwmCgtyknSFJfW" />
+	</bean>
+
+	<bean id="MysqlTestDBSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+         <property name="driverClassName"  value= "com.mysql.cj.jdbc.Driver" />
+         <property name="url"  value= "jdbc:mysql://localhost:3306/test?serverTimezone=UTC" />
+         <property name="username"  value= "root"  />
+         <property name="password"  value= "123456"  />
+    </bean>
+
+	<bean id="SqlServerTestDBSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+         <property name="driverClassName"  value= "com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+         <property name="url"  value= "jdbc:sqlserver://192.168.1.71;databaseName=sqlservertest" />
+         <property name="username"  value= "sa"  />
+         <property name="password"  value= "123456"  />
+    </bean>
+
+	<bean id= "OracleTestDBSource" class = "org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+         <property name="driverClassName"  value= "oracle.jdbc.driver.OracleDriver" />
+         <property name="url"  value= "jdbc:oracle:thin:@192.168.1.8:1521:ORCL" />
+         <property name="username"  value= "oracletest"  />
+         <property name="password"  value= "123456"  />
+    </bean>
+
+	<bean id= "PostgresqlTestDBSource" class = "org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+         <property name="driverClassName"  value= "org.postgresql.Driver" />
+         <property name="url"  value= "jdbc:postgresql://localhost:5432/postgresqltest" />
+         <property name="username"  value= "postgres"  />
+         <property name="password"  value= "123456"  />
+    </bean>
+</beans>
