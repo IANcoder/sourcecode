@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-4.3.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+	<bean id="PostgresqlTest" class="com.cloudbeaver.checkAndAppend.DatabaseBeanTestConf">
+		<property name="jdbcTemplate">
+			<bean class="org.springframework.jdbc.core.JdbcTemplate">
+				<property name="dataSource">
+					<ref bean="PostgresqlTestDBSource"/>
+				</property>
+			</bean>
+		</property>
+		<property name="databaseName" value="PostgresqlTest" />
+		<property name="databaseType" value="postgres" />
+		<property name="containsLong" value="true"/>
+		<property name="containsDate" value="true"/>
+		<property name="containsLongText" value="true"/>
+		<property name="containsSubTable" value="true"/>
+		<property name="containsReplaceOp" value="true"/>
+		<property name="FullSync" value="true"/>
+		<property name="doesAppend" value="true"/>
+		<property name="appendCount" value="2"/>
+        <property name="tables">
+         	<list>
+         		<bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+         			<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="users" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+			        <property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="student" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+			        <property name="key" value="student.depid=department.id" />
+					<property name="join">
+						<list>
+							<value>department</value>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="department" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+			        <property name="key" value="department.id=class.depid" />
+					<property name="join_subtable">
+						<list>
+							<value>class</value>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="monitor" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+					<property name="replaceOp">
+						<list>
+							<bean class="com.cloudbeaver.client.dbbean.TransformOp">
+								<property name="toColumn" value="classid" />
+								<property name="fromTable" value="class" />
+								<property name="fromKey" value="id" />
+								<property name="fromColumns" value="classname" />
+							</bean>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="course" />
+			    	<property name="versionColumn" value="TOTAL_LINES_NUMBER" />
+			    	<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="teacher" />
+			    	<property name="versionColumn" value="TOTAL_LINES_NUMBER" />
+			    	<property name="key" value="teacher.depid=department.id" />
+					<property name="join">
+						<list>
+							<value>department</value>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="date_test" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+			        <property name="key" value="date_test.depid=department.id" />
+					<property name="join">
+						<list>
+							<value>department</value>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="timestamp_test" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+			        <property name="key" value="timestamp_test.depid=department.id" />
+					<property name="join">
+						<list>
+							<value>department</value>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+			    <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			    	<property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="consumer" />
+			    	<property name="versionColumn" value="id" />
+			        <property name="minVersion" value="0" />
+			        <property name="key" value="consumer.depid=department.id" />
+					<property name="join">
+						<list>
+							<value>department</value>
+						</list>
+					</property>
+					<property name="initNum" value="12000"/>
+			        <property name="appendNum" value="12000"/>
+			    </bean>
+         	</list>
+         </property>
+    </bean>
+</beans>
