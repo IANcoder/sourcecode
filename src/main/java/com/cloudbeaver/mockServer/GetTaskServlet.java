@@ -414,34 +414,40 @@ public class GetTaskServlet extends HttpServlet{
 
 
 	public static String OldAllDBInitJsonForMockTest = "{\"databases\":["
-			+ "{\"db\":\"MysqlTest\",\"rowversion\":\"ID\",\"tables\":["
-			+ "{\"table\":\"users\",\"ID\":\"0\"},"
-			+ "{\"table\":\"student\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"student.depId=department.ID\"},"
-			+ "{\"table\":\"consumer\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"consumer.depId=department.ID\"},"
-			+ "{\"table\":\"department\",\"ID\":\"0\",\"join_subtable\":[\"class\"],\"key\":\"department.ID=class.depId\"},"
-			+ "{\"table\":\"monitor\",\"ID\":\"0\",\"replaceOp\":[{\"toColumn\":\"classId\",\"fromTable\":\"class\",\"fromKey\":\"ID\",\"fromColumns\":\"classname\"}]}"
-			+ "]},"
-			+ "{\"db\":\"PostgresqlTest\",\"rowversion\":\"id\",\"tables\":["
-//			+ "{\"table\":\"users\",\"id\":\"0\"},"
-//			+ "{\"table\":\"student\",\"id\":\"0\",\"join\":[\"department\"],\"key\":\"student.depid=department.id\"},"
-//			+ "{\"table\":\"consumer\",\"id\":\"0\",\"join\":[\"department\"],\"key\":\"consumer.depid=department.id\"},"
-			+ "{\"table\":\"department\",\"id\":\"0\",\"join_subtable\":[\"class\"],\"key\":\"department.id=class.depid\"}"
-//			+ "{\"table\":\"monitor\",\"id\":\"0\",\"replaceOp\":[{\"toColumn\":\"classid\",\"fromTable\":\"class\",\"fromKey\":\"id\",\"fromColumns\":\"classname\"}]}"
-//			+ "]},"
-//			+ "{\"db\":\"SqlServerTest\",\"rowversion\":\"ID\",\"tables\":["
+//			+ "{\"db\":\"MysqlTest\",\"rowversion\":\"ID\",\"tables\":["
 //			+ "{\"table\":\"users\",\"ID\":\"0\"},"
 //			+ "{\"table\":\"student\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"student.depId=department.ID\"},"
 //			+ "{\"table\":\"consumer\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"consumer.depId=department.ID\"},"
 //			+ "{\"table\":\"department\",\"ID\":\"0\",\"join_subtable\":[\"class\"],\"key\":\"department.ID=class.depId\"},"
 //			+ "{\"table\":\"monitor\",\"ID\":\"0\",\"replaceOp\":[{\"toColumn\":\"classId\",\"fromTable\":\"class\",\"fromKey\":\"ID\",\"fromColumns\":\"classname\"}]}"
 //			+ "]},"
+//			+ "{\"db\":\"PostgresqlTest\",\"rowversion\":\"id\",\"tables\":["
+////			+ "{\"table\":\"users\",\"id\":\"0\"},"
+////			+ "{\"table\":\"student\",\"id\":\"0\",\"join\":[\"department\"],\"key\":\"student.depid=department.id\"},"
+////			+ "{\"table\":\"consumer\",\"id\":\"0\",\"join\":[\"department\"],\"key\":\"consumer.depid=department.id\"},"
+//			+ "{\"table\":\"department\",\"id\":\"0\",\"join_subtable\":[\"class\"],\"key\":\"department.id=class.depid\"}"
+////			+ "{\"table\":\"monitor\",\"id\":\"0\",\"replaceOp\":[{\"toColumn\":\"classid\",\"fromTable\":\"class\",\"fromKey\":\"id\",\"fromColumns\":\"classname\"}]}"
+////			+ "]},"
+			+ "{\"db\":\"SqlServerTest\",\"rowversion\":\"ID\",\"tables\":["
+			+ "{\"table\":\"users\",\"ID\":\"0\"},"
+			+ "{\"table\":\"student\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"student.depId=department.ID\"},"
+		//	+ "{\"table\":\"course\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"course.depId=department.ID\"},"
+			+ "{\"table\":\"department\",\"ID\":\"0\",\"join_subtable\":[\"class\"],\"key\":\"department.ID=class.depId\"},"
+		//	+ "{\"table\":\"datetime_test\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"datetime_test.depId=department.ID\"},"
+		//	+ "{\"table\":\"teacher\",\"ID\":\"0
+		//	+",\"join\":[\"department\"],\"key\":\"teacher.depId=department.ID\",\"versionColumn\":\"TOTAL_LINES_NUMBER\"},"			
+			+ "{\"table\":\"monitor\",\"ID\":\"0\",\"replaceOp\":[{\"toColumn\":\"classId\",\"fromTable\":\"class\",\"fromKey\":\"ID\",\"fromColumns\":\"classname\"}]}"
+			+ "]}"
+			
+			//"
 //			+ "{\"db\":\"OracleTest\",\"rowversion\":\"ID\",\"tables\":["
 //			+ "{\"table\":\"users\",\"ID\":\"0\"},"
 //			+ "{\"table\":\"student\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"student.depId=department.ID\"},"
 //			+ "{\"table\":\"consumer\",\"ID\":\"0\",\"join\":[\"department\"],\"key\":\"consumer.depId=department.ID\"},"
 //			+ "{\"table\":\"department\",\"ID\":\"0\",\"join_subtable\":[\"class\"],\"key\":\"department.ID=class.depId\"},"
 //			+ "{\"table\":\"monitor\",\"ID\":\"0\",\"replaceOp\":[{\"toColumn\":\"CLASSID\",\"fromTable\":\"class\",\"fromKey\":\"ID\",\"fromColumns\":\"classname\"}]}"
-			+ "]}"
+	//		+ "]}"
+			//+"
 			+ "]}";
 
 //	private static String documentDBInitJson = "{\"databases\":[{\"db\":\"DocumentDB\",\"rowversion\":\"xgsj\",\"tables\":["
@@ -730,6 +736,7 @@ public class GetTaskServlet extends HttpServlet{
     	PrintWriter pw = resp.getWriter();
     	//pw.write(tableId);
         pw.write(json);
+        System.out.println("json is "+json);
         pw.flush();
         pw.close();
         System.out.println("get task succeed!");

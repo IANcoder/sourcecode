@@ -18,8 +18,8 @@
 		<property name="databaseName" value="SqlServerTest" />
 		<property name="databaseType" value="sqlserver" />
 		<property name="containsLong" value="true"/>
-		<property name="containsDate" value="true"/>
-		<property name="containsLongText" value="true"/>
+		<property name="containsDate" value="false"/>
+		<property name="containsLongText" value="false"/>
 		<property name="containsSubTable" value="true"/>
 		<property name="containsReplaceOp" value="true"/>
 		<property name="FullSync" value="true"/>

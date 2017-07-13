@@ -45,7 +45,7 @@ public class PostDataServlet extends HttpServlet{
 
 	private static final String FLUME_HTTP_REQ_PREFIX = "[{ \"headers\" : {}, \"body\" : \"";
 	public static final String DEFAULT_CHARSET = "utf-8";
-	public static final String FILE_SAVE_DIR = "/home/beaver/Documents/test/result/";
+	public static final String FILE_SAVE_DIR = "/home/fanyan/Documents/test/result/";
 	public static final boolean NEED_SAVE_FILE = false;
 	public static final String DATABASE_FILE_PREFIX = CheckAndAppendDataTest.DATABASE_FILE_PREFIX;
 	public static final int WRITE_BUFFER_SIZE = 1024;
@@ -93,7 +93,7 @@ public class PostDataServlet extends HttpServlet{
     	while ((tmp = br.readLine()) != null) {
 			sb.append(tmp);
 		}
-
+    //	System.out.println(sb);
     	if(checkAndAppendBean.isNewVersion()){
     		if(sb.toString().contains(BeaverUtils.IP_ADDRESS)){
         		System.out.println("heart beat:" + sb.toString());
@@ -101,7 +101,7 @@ public class PostDataServlet extends HttpServlet{
         	}
         	byte[] bs = Base64.decodeBase64(sb.toString().getBytes(DEFAULT_CHARSET));
         	String content = new String(bs,DEFAULT_CHARSET);
-        	System.out.println("get post data, data:" + content);
+      //  	System.out.println("get post data, data:" + content);
         	JSONArray jArray = JSONArray.fromObject(content);
         	String databaseName = jArray.getJSONObject(0).getString(DATABASE_NAME);
         	String tableName = jArray.getJSONObject(0).getString(TABLE_NAME);
@@ -150,7 +150,7 @@ public class PostDataServlet extends HttpServlet{
         	} else {
         		content = sb.toString();
         	}
-    		System.out.println("content = " + content);
+    	//	System.out.println("content = " + content);
     		
     		String dbName = null;
     		String tName = null;

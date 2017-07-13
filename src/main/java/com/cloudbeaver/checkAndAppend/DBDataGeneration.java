@@ -66,7 +66,9 @@ public class DBDataGeneration {
 	public static void writeCreateTableSQL(DatabaseBeanTestConf dbBean){
 		String fileName = TestFileMap.get(dbBean.getDatabaseName()) + SETUP_SQL_FILE;
     	RandomAccessFile file;
+    	System.out.println("Note: db name is "+dbBean.getDatabaseName());
 		try {
+			System.out.println("true base is "+fileName);
 			file = new RandomAccessFile(fileName, "rw");
 			file.seek(file.length());
 			for(int i = 0 ; i < CreateTableSQL.length; i++){
@@ -733,7 +735,7 @@ public class DBDataGeneration {
 		long startTime = 0;
 		long endTime = 0;
 		int maxId = 0;
-
+		System.out.println("into dbinit,and tested db size is "+dbBeans.getDatabases().size());
 		for (int i = 0; i < dbBeans.getDatabases().size(); i++) {
 			dbBean = dbBeans.getDatabases().get(i);
 			int maxRecordNum = 0;
@@ -979,7 +981,6 @@ public class DBDataGeneration {
             }
 		}
 	}
-
 	public void deleteDBFile(CheckAndAppendTestConf dbBeans){
 		File file = null;
 		for (DatabaseBeanTestConf dbBean : dbBeans.getDatabases()) {
@@ -991,7 +992,6 @@ public class DBDataGeneration {
 			}
 		}
 	}
-
 	public static void main(String []args) throws ParseException {
 	}
 }

@@ -6,12 +6,14 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import java.util.*;
 import com.cloudbeaver.client.common.BeaverFatalException;
 import com.cloudbeaver.client.common.BeaverUtils;
 import com.cloudbeaver.mockServer.MockWebServer;
@@ -38,25 +40,32 @@ public class CheckAndAppendDataTest{
 //	@Before
 //	@Ignore
 	public static void setUpServers() throws ParseException{
+		System.out.println("clear old data");
+		dbDataGeneration.DBClear(checkAndAppendBean);
+		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
+		dbDataGeneration.deleteDBFile(checkAndAppendBean);
+		System.out.println("clear success!");
+
 		mockServer.start(false);
 		initMap();
-//		for(DatabaseBeanTestConf dbBean : checkAndAppendBean.getDatabases()){
-//			if(dbBean.isDoesAppend()){
-//				AppendCountMap.put(dbBean.getDatabaseName(), dbBean.getAppendCount());
-//				MAX_LOOP_NUM = MAX_LOOP_NUM > dbBean.getAppendCount() ? MAX_LOOP_NUM : dbBean.getAppendCount();
-//			} else {
-//				AppendCountMap.put(dbBean.getDatabaseName(), 0);
-//			}
-//		}
-//		dbDataGeneration.DBInit(checkAndAppendBean);
+		for(DatabaseBeanTestConf dbBean : checkAndAppendBean.getDatabases()){
+			if(dbBean.isDoesAppend()){
+				AppendCountMap.put(dbBean.getDatabaseName(), dbBean.getAppendCount());
+				MAX_LOOP_NUM = MAX_LOOP_NUM > dbBean.getAppendCount() ? MAX_LOOP_NUM : dbBean.getAppendCount();
+			} else {
+				AppendCountMap.put(dbBean.getDatabaseName(), 0);
+			}
+		}
+		System.out.println("into dbinit");
+		dbDataGeneration.DBInit(checkAndAppendBean);
 	}
 
 	@AfterClass
 	public static void tearDownServers(){
 		mockServer.stop();
-//		dbDataGeneration.DBClear(checkAndAppendBean);
-//		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
-//		dbDataGeneration.deleteDBFile(checkAndAppendBean);
+		dbDataGeneration.DBClear(checkAndAppendBean);
+		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
+		dbDataGeneration.deleteDBFile(checkAndAppendBean);
 	}
 
 	public static void initMap(){
@@ -146,8 +155,9 @@ public class CheckAndAppendDataTest{
 	}
 
 	public static void main(String[] args) {
-		CheckAndAppendDataTest cTest = new CheckAndAppendDataTest();
-		cTest.start();
+		String path="/home/fanyan/dbsync-test/conf_test/DBSetup/SqlServerTest";
+	//	CheckAndAppendDataTest cTest = new CheckAndAppendDataTest();
+	//	cTest.start();
 	}
 
 	public void start() {

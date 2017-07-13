@@ -11,7 +11,8 @@
 	<context:mbean-export default-domain="ShowCase" registration="replaceExisting" />
 
 	<import resource="DBSource.xml"/>
-	<import resource="PostgresqlTest.xml"/>
+	<!--<import resource="PostgresqlTest.xml"/>-->
+ 	<import resource="SqlServerTest.xml"/>
 	<!--
 		<import resource="MysqlTest.xml"/>
 		<import resource="SqlServerTest.xml"/>
@@ -19,10 +20,11 @@
 	 -->
 	
 	<bean id="checkAndAppendTestConf" class="com.cloudbeaver.checkAndAppend.CheckAndAppendTestConf">
-		<property name="NewVersion" value="true"/>
+		<property name="NewVersion" value="false"/>
     	<property name="databases">
     		<list>
-    			<ref bean="PostgresqlTest"/>
+			<ref bean="SqlServerTest"/>
+    			<!--<ref bean="PostgresqlTest"/>-->
 	    		<!--
 	    			<ref bean="MysqlTest"/>
 	    			<ref bean="SqlServerTest"/>
