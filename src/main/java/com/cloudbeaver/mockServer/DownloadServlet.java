@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.cloudbeaver.client.dbbean.MultiDatabaseBean;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -18,7 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebServlet("/api/business/monitor/SyncStatus/download/*")
 public class DownloadServlet extends HttpServlet{
-	private static Logger logger = Logger.getLogger(DownloadServlet.class);
+	//private static Logger logger = LogManager.getLogger(DownloadServlet.class);
+	private static Logger logger = LogManager.getLogger("logger");
 	private static String clientId = null;
 	private static MultiDatabaseBean databaseBeans;
 	private static String getTaskApi = "/api/business/monitor/SyncStatus/download/";

@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,49 +19,57 @@ import com.cloudbeaver.client.common.BeaverUtils;
 import com.cloudbeaver.mockServer.MockWebServer;
 
 public class CheckAndAppendDataTest{
-	private static Logger logger = Logger.getLogger(CheckAndAppendDataTest.class);
-	public static final String DATABASE_FILE_PREFIX = "/tmp/db/";
-	public static Map<String, String> DB2TypeMap = new HashMap<String, String>();
-	public static Map<String, Long> DBResultFileMap = new HashMap<String, Long>();
-	public static Map<String, String> DBFileMap = new HashMap<String, String>();
-	public static Map<String, Integer> AppendCountMap = new HashMap<String, Integer>();
+	private Logger logger = LogManager.getLogger(CheckAndAppendDataTest.class.getName());
+	public static String DATABASE_FILE_PREFIX = "/tmp/db/";
+	public Map<String, String> DB2TypeMap = new HashMap<String, String>();
+	public Map<String, Long> DBResultFileMap = new HashMap<String, Long>();
+	public Map<String, String> DBFileMap = new HashMap<String, String>();
+	public Map<String, Integer> AppendCountMap = new HashMap<String, Integer>();
 
 	public static String CONF_FILENAME = "conf_test/CheckAndAppendConf/CheckAndAppendTestConf.xml";
-	public static ApplicationContext appContext = new FileSystemXmlApplicationContext(CONF_FILENAME);
-	public static CheckAndAppendTestConf checkAndAppendBean = appContext.getBean("checkAndAppendTestConf", CheckAndAppendTestConf.class);
+	public ApplicationContext appContext = new FileSystemXmlApplicationContext(CONF_FILENAME);
+	public CheckAndAppendTestConf checkAndAppendBean = appContext.getBean("checkAndAppendTestConf", CheckAndAppendTestConf.class);
 
-	private static MockWebServer mockServer = new MockWebServer();
-	private static DBDataGeneration dbDataGeneration = new DBDataGeneration();
-	private static CheckResults checkResults = new CheckResults();
+	private MockWebServer mockServer = new MockWebServer();
+	private DBDataGeneration dbDataGeneration = new DBDataGeneration();
+	private CheckResults checkResults = new CheckResults();
 	
 	private static int MAX_LOOP_NUM = 0;
 
 	@BeforeClass
 //	@Before
 //	@Ignore
-	public static void setUpServers() throws ParseException{
+	public void setUpServers() throws ParseException{
+		logger.info("i'm here");
+		System.out.println("clear old data");
+		dbDataGeneration.DBClear(checkAndAppendBean);
+		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
+		dbDataGeneration.deleteDBFile(checkAndAppendBean);
+		System.out.println("clear success!");
+
 		mockServer.start(false);
 		initMap();
-//		for(DatabaseBeanTestConf dbBean : checkAndAppendBean.getDatabases()){
-//			if(dbBean.isDoesAppend()){
-//				AppendCountMap.put(dbBean.getDatabaseName(), dbBean.getAppendCount());
-//				MAX_LOOP_NUM = MAX_LOOP_NUM > dbBean.getAppendCount() ? MAX_LOOP_NUM : dbBean.getAppendCount();
-//			} else {
-//				AppendCountMap.put(dbBean.getDatabaseName(), 0);
-//			}
-//		}
-//		dbDataGeneration.DBInit(checkAndAppendBean);
+		for(DatabaseBeanTestConf dbBean : checkAndAppendBean.getDatabases()){
+			if(dbBean.isDoesAppend()){
+				AppendCountMap.put(dbBean.getDatabaseName(), dbBean.getAppendCount());
+				MAX_LOOP_NUM = MAX_LOOP_NUM > dbBean.getAppendCount() ? MAX_LOOP_NUM : dbBean.getAppendCount();
+			} else {
+				AppendCountMap.put(dbBean.getDatabaseName(), 0);
+			}
+		}
+		System.out.println("into dbinit");
+		dbDataGeneration.DBInit(checkAndAppendBean);
 	}
 
 	@AfterClass
-	public static void tearDownServers(){
+	public void tearDownServers(){
 		mockServer.stop();
-//		dbDataGeneration.DBClear(checkAndAppendBean);
-//		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
-//		dbDataGeneration.deleteDBFile(checkAndAppendBean);
+		dbDataGeneration.DBClear(checkAndAppendBean);
+		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
+		dbDataGeneration.deleteDBFile(checkAndAppendBean);
 	}
 
-	public static void initMap(){
+	public void initMap(){
 		DB2TypeMap.put("DocumentDB", "sqlserver");
 		DB2TypeMap.put("MeetingDB", "webservice");
 		DB2TypeMap.put("TalkDB", "webservice");
@@ -81,7 +91,7 @@ public class CheckAndAppendDataTest{
 		DBFileMap.put("PostgresqlTest", DATABASE_FILE_PREFIX + "PostgresqlTest/");
 	}
 
-	public static boolean traverseFolder(String folderPath){
+	public boolean traverseFolder(String folderPath){
 		logger.info("-------------------------start traverse folder-------------------------------");
 		boolean b = true;
 		File file = new File(folderPath);
@@ -146,8 +156,9 @@ public class CheckAndAppendDataTest{
 	}
 
 	public static void main(String[] args) {
-		CheckAndAppendDataTest cTest = new CheckAndAppendDataTest();
-		cTest.start();
+		String path="/home/fanyan/dbsync-test/conf_test/DBSetup/SqlServerTest";
+	//	CheckAndAppendDataTest cTest = new CheckAndAppendDataTest();
+	//	cTest.start();
 	}
 
 	public void start() {

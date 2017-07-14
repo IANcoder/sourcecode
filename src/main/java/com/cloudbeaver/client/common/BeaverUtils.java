@@ -48,8 +48,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.javatuples.Pair;
+
+import com.cloudbeaver.mockServer.DownloadServlet;
 
 import net.sf.json.JSONObject;
 
@@ -70,8 +73,7 @@ class beaverTrustManager implements X509TrustManager{
 }
 
 public class BeaverUtils {
-	private static Logger logger = Logger.getLogger(BeaverUtils.class);
-
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger("logger");
 	public enum ErrCode{
 		OK("all things ok"),
 		SQL_ERROR("can't execute sql query"),

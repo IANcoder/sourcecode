@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @WebServlet("/api/business/monitor/SyncStatus/upload/*")
 public class UploadServlet extends HttpServlet {
-	private static Logger logger = Logger.getLogger(UploadServlet.class);
 	public static final String DEFAULT_CHARSET = "utf-8";
-
+	private static Logger logger = LogManager.getLogger("logger");
 	@Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
     	BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));

@@ -1,6 +1,7 @@
 package com.cloudbeaver.mockServer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -12,9 +13,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import com.cloudbeaver.client.common.BeaverUtils;
 
 public class MockWebServer {
-	private static Logger logger = Logger.getLogger(MockWebServer.class);
 	private static final int HTTP_PORT = 8877;
-
+	private static Logger logger = LogManager.getLogger("logger");
 	private Server server;
 
 	public void start(boolean shouldJoin){

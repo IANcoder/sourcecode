@@ -11,11 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @WebServlet("/api/auth/login")
 public class LoginServlet  extends HttpServlet{
-	private static Logger logger = Logger.getLogger(LoginServlet.class);
+	private static Logger logger = LogManager.getLogger("logger");
 	private static final String TOKEN = "token";
 	private static final String ID = "id";
 

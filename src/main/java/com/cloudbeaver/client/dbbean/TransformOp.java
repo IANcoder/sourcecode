@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -12,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * for now, only replace operator
  */
 public class TransformOp {
-	private static Logger logger = Logger.getLogger(TransformOp.class);
+	//private static Logger logger = Logger.getLogger(TransformOp.class);
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger("logger");
 	private static String spliter = "___";
 
 	private String toColumn;

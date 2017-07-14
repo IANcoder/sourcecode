@@ -1,6 +1,7 @@
 package com.cloudbeaver.client.dbbean;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.junit.Assert;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
  */
 public class MultiDatabaseBean implements InitializingBean {
 	@JsonIgnore
-    private Logger logger = Logger.getLogger(MultiDatabaseBean.class);
+   // private Logger logger = Logger.getLogger("logger");
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger("logger");
 
 	private List<DatabaseBean> databases;
 
