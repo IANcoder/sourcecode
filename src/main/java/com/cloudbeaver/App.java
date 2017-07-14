@@ -1,6 +1,5 @@
 package com.cloudbeaver;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,10 +19,8 @@ public class App
 	static {
 		try{
 			PropertyConfigurator.configure("conf_test/log4j.properties");
-
-	    	File file = new File("conf_test/log4j2.xml");  
-	        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));  
-	        final ConfigurationSource source = new ConfigurationSource(in);  
+	    	File file = new File("conf_test/log4j2.xml");
+	        ConfigurationSource source = new ConfigurationSource(new FileInputStream(file));
 	        Configurator.initialize(null, source);
 		}catch(IOException e){
 			e.printStackTrace();
