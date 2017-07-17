@@ -3,3 +3,5 @@ target/
 .settings/
 *.iml
 .project
+conf_test/DBSetup/
+conf_test/DBSetup/SqlServerTest/
