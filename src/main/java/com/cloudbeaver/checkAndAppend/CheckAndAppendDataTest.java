@@ -1,21 +1,25 @@
 package com.cloudbeaver.checkAndAppend;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.LoggerNameAwareMessage;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
+
 import com.cloudbeaver.client.common.BeaverFatalException;
 import com.cloudbeaver.client.common.BeaverUtils;
 import com.cloudbeaver.mockServer.MockWebServer;
-
 public class CheckAndAppendDataTest{
 	private Logger logger = LogManager.getLogger(CheckAndAppendDataTest.class.getName());
 	public static String DATABASE_FILE_PREFIX = "/tmp/db/";
@@ -31,7 +35,7 @@ public class CheckAndAppendDataTest{
 	private MockWebServer mockServer = new MockWebServer();
 	private DBDataGeneration dbDataGeneration = new DBDataGeneration();
 	private CheckResults checkResults = new CheckResults();
-	
+	private Process p;
 	private static int MAX_LOOP_NUM = 0;
 
 	@BeforeClass
@@ -57,8 +61,23 @@ public class CheckAndAppendDataTest{
 		}
 		System.out.println("into dbinit");
 		dbDataGeneration.DBInit(checkAndAppendBean);
+		System.out.println("into external process");
+		ProcessBuilder pb = new ProcessBuilder("java", "-jar","dbsync-1.0-SNAPSHOT.jar","-m","dbUploader","-n","dbUploader");
+		pb.directory(new File("/home/fanyan/deploy"));
+		File log = new File("/home/fanyan/deploy/client.log");
+		pb.redirectErrorStream(true);
+		pb.redirectOutput(Redirect.appendTo(log));
+		try {
+		    p = pb.start();
+			assert pb.redirectInput() == Redirect.PIPE;
+			assert pb.redirectOutput().file() == log;
+			assert p.getInputStream().read() == -1;
+//			long start=System.currentTimeMillis();
+//			while(System.currentTimeMillis()-start<60*1000*2);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
 	@AfterClass
 	public void tearDownServers(){
 		mockServer.stop();
@@ -96,25 +115,15 @@ public class CheckAndAppendDataTest{
         if (file.exists()) {
         	File[] files = file.listFiles();
         	for (File file2 : files) {
-        		if(DBResultFileMap.isEmpty()){
+        		if(!(DBResultFileMap.containsKey(file2.getAbsolutePath())&&DBResultFileMap.get(file2.getAbsolutePath())== file2.lastModified()))
+        		{
         			b = false;
         			DBResultFileMap.put(file2.getAbsolutePath(), file2.lastModified());
-        		} else {
-        			if(DBResultFileMap.containsKey(file2.getAbsolutePath())){
-        				if(DBResultFileMap.get(file2.getAbsolutePath()) != file2.lastModified()){
-        					b = false;
-        					DBResultFileMap.put(file2.getAbsolutePath(), file2.lastModified());
-        				}
-        			} else {
-        				b = false;
-        				DBResultFileMap.put(file2.getAbsolutePath(), file2.lastModified());
-        			}
         		}
         	}
-        }
+        }else b=false;
         return b;
 	}
-
 	@Test
 	public void testGetMsg() throws SQLException, BeaverFatalException, ParseException{
 		for(int i = 0; i <= MAX_LOOP_NUM; i++){
@@ -142,14 +151,14 @@ public class CheckAndAppendDataTest{
 					break;
 				}
 			}
-//			for (int j = 0; j < checkAndAppendBean.getDatabases().size(); j++) {
-//				if(checkAndAppendBean.getDatabases().get(j).isDoesAppend() && checkAndAppendBean.getDatabases().get(j).getAppendCount() > i){
-//					logger.info("-------------------------start append " + checkAndAppendBean.getDatabases().get(j).getDatabaseName() + " " + (i+1) + "-------------------------------");
-//					dbDataGeneration.appendDataToDB(checkAndAppendBean.getDatabases().get(j), j, checkAndAppendBean);
-//					logger.info("-------------------------start append " + checkAndAppendBean.getDatabases().get(j).getDatabaseName() + " " + (i+1) + "-------------------------------");
-//				}
-//			}
-//			BeaverUtils.sleep(30*1000);
+			for (int j = 0; j < checkAndAppendBean.getDatabases().size(); j++) {
+				if(checkAndAppendBean.getDatabases().get(j).isDoesAppend() && checkAndAppendBean.getDatabases().get(j).getAppendCount() > i){
+					logger.info("-------------------------start append " + checkAndAppendBean.getDatabases().get(j).getDatabaseName() + " " + (i+1) + "-------------------------------");
+					dbDataGeneration.appendDataToDB(checkAndAppendBean.getDatabases().get(j), j, checkAndAppendBean);
+					logger.info("-------------------------start append " + checkAndAppendBean.getDatabases().get(j).getDatabaseName() + " " + (i+1) + "-------------------------------");
+				}
+			}
+			BeaverUtils.sleep(30*1000);
 		}
 	}
 
@@ -168,6 +177,8 @@ public class CheckAndAppendDataTest{
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			p.destroyForcibly();
+			System.out.println("external process shut down");
 			tearDownServers();
 		}		
 	}

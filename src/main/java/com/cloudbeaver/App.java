@@ -29,13 +29,6 @@ public class App
 
     public static void main( String[] args ) throws IOException
     {
-    	//PropertyConfigurator.configure("log4j2.xml");
-//    	LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
-//    	File file = new File("conf_test/log4j2.xml");
-//    	((org.apache.logging.log4j.core.LoggerContext) context).setConfigLocation(file.toURI());
-    	//System.out.println("this is test");
-//        Logger logger = LogManager.getLogger("logger");
-//        logger.info("this is my test");
         CheckAndAppendDataTest test = new CheckAndAppendDataTest();
         test.start();
     }
