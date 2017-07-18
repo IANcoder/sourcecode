@@ -716,7 +716,7 @@ public class GetTaskServlet extends HttpServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-    	logger.info(AllDBInitJsonForMockTest);
+    	//logger.info(AllDBInitJsonForMockTest);
     	String url = req.getRequestURI();
     	int tableIdIndex = url.lastIndexOf('/');
     	if (url.length() < getTaskApi.length() || tableIdIndex != (getTaskApi.length() - 1)) {
@@ -737,10 +737,10 @@ public class GetTaskServlet extends HttpServlet{
     	PrintWriter pw = resp.getWriter();
     	//pw.write(tableId);
         pw.write(json);
-        System.out.println("json is "+json);
+       // System.out.println("json is "+json);
         pw.flush();
         pw.close();
-        System.out.println("get task succeed!");
+       // System.out.println("get task succeed!");
     }
 
     @Override

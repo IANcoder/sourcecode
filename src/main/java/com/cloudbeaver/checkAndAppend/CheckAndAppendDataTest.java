@@ -13,6 +13,7 @@ import org.apache.logging.log4j.message.LoggerNameAwareMessage;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.env.SystemEnvironmentPropertySource;
@@ -37,7 +38,8 @@ public class CheckAndAppendDataTest{
 	private CheckResults checkResults = new CheckResults();
 	private Process p;
 	private static int MAX_LOOP_NUM = 0;
-
+	private String path;
+	private String[] cmd;
 	@BeforeClass
 //	@Before
 //	@Ignore
@@ -62,9 +64,12 @@ public class CheckAndAppendDataTest{
 		System.out.println("into dbinit");
 		dbDataGeneration.DBInit(checkAndAppendBean);
 		System.out.println("into external process");
-		ProcessBuilder pb = new ProcessBuilder("java", "-jar","dbsync-1.0-SNAPSHOT.jar","-m","dbUploader","-n","dbUploader");
-		pb.directory(new File("/home/fanyan/deploy"));
-		File log = new File("/home/fanyan/deploy/client.log");
+		cmd=checkAndAppendBean.getCmd();
+		//ProcessBuilder pb = new ProcessBuilder("java", "-jar","dbsync-1.0-SNAPSHOT.jar","-m","dbUploader","-n","dbUploader");
+		ProcessBuilder pb=new ProcessBuilder(cmd);
+		path=checkAndAppendBean.getPath();
+		pb.directory(new File(path));
+		File log = new File(path+"/client.log");
 		pb.redirectErrorStream(true);
 		pb.redirectOutput(Redirect.appendTo(log));
 		try {
@@ -72,8 +77,6 @@ public class CheckAndAppendDataTest{
 			assert pb.redirectInput() == Redirect.PIPE;
 			assert pb.redirectOutput().file() == log;
 			assert p.getInputStream().read() == -1;
-//			long start=System.currentTimeMillis();
-//			while(System.currentTimeMillis()-start<60*1000*2);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -169,6 +172,7 @@ public class CheckAndAppendDataTest{
 	}
 
 	public void start() {
+	//	tearDownServers();
 		try {
 			setUpServers();//启动server和初始化数据库
 			logger.info("---------------------------DB Init Complete!-----------------------------");

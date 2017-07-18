@@ -20,7 +20,7 @@
 
 	<bean id="SqlServerTestDBSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
          <property name="driverClassName"  value="com.microsoft.jdbc.sqlserver.SQLServerDriver"/>
-         <property name="url" value="jdbc:sqlserver://192.168.1.4:1433;databaseName=sqlservertest"/>
+         <property name="url" value="jdbc:sqlserver://192.168.1.117:1433;databaseName=sqlservertest"/>
         <property name="username"  value= "sa"  />
          <property name="password"  value= "123456"  />
         </bean>
