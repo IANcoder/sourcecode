@@ -22,17 +22,7 @@
 	<bean id="checkAndAppendTestConf" class="com.cloudbeaver.checkAndAppend.CheckAndAppendTestConf">
 		<property name="NewVersion" value="false"/>
 		<property name="Path" value="/home/fanyan/deploy"/>
-		<property name="cmd">
-			<list>
-				<value>java</value>
-				<value>-jar</value>
-				<value>dbsync-1.0-SNAPSHOT.jar</value>
-				<value>-m</value>
-				<value>dbUploader</value>
-				<value>-n</value>
-				<value>dbUploader</value>
-		    </list>
-		</property>
+		<property name="cmd" value="java -jar dbsync-1.0-SNAPSHOT.jar -m dbUploader -n dbUploader"/>
     	<property name="databases">
     		<list>
 			<ref bean="SqlServerTest"/>

@@ -11,15 +11,15 @@ public class CheckAndAppendTestConf implements InitializingBean{
 	private List<DatabaseBeanTestConf> databases;
 	private boolean NewVersion;//true为新版本，false为老版本
 	private String Path;
-	private String[] cmd;
+	private String cmd;
 	public boolean isNewVersion() {
 		return NewVersion;
 	}
-	public void setCmd(String []cmd)
+	public void setCmd(String cmd)
 	{
 		this.cmd=cmd;
 	}
-	public String[] getCmd()
+	public String getCmd()
 	{
 		return cmd;
 	}

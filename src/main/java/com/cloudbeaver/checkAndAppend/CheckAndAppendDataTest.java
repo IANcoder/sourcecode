@@ -39,7 +39,7 @@ public class CheckAndAppendDataTest{
 	private Process p;
 	private static int MAX_LOOP_NUM = 0;
 	private String path;
-	private String[] cmd;
+	private String []cmd;
 	@BeforeClass
 //	@Before
 //	@Ignore
@@ -64,8 +64,7 @@ public class CheckAndAppendDataTest{
 		System.out.println("into dbinit");
 		dbDataGeneration.DBInit(checkAndAppendBean);
 		System.out.println("into external process");
-		cmd=checkAndAppendBean.getCmd();
-		//ProcessBuilder pb = new ProcessBuilder("java", "-jar","dbsync-1.0-SNAPSHOT.jar","-m","dbUploader","-n","dbUploader");
+		cmd=checkAndAppendBean.getCmd().split(" ");
 		ProcessBuilder pb=new ProcessBuilder(cmd);
 		path=checkAndAppendBean.getPath();
 		pb.directory(new File(path));
