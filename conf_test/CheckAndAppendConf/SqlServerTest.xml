@@ -15,15 +15,16 @@
 				</property>
 			</bean>
 		</property>
-		<property name="databaseName" value="SqlServerTest" />
+		<property name="databaseName" value="DocumentDB"/>
 		<property name="databaseType" value="sqlserver" />
 		<property name="containsLong" value="true"/>
 		<property name="containsDate" value="false"/>
 		<property name="containsLongText" value="false"/>
 		<property name="containsSubTable" value="true"/>
 		<property name="containsReplaceOp" value="true"/>
+		<property name="containsTestTimeStamp" value="true"/>
 		<property name="FullSync" value="true"/>
-		<property name="doesAppend" value="true"/>
+		<property name="doesAppend" value="false"/>
 		<property name="appendCount" value="2"/>
         <property name="tables">
          	<list>
@@ -145,6 +146,22 @@
 					<property name="initNum" value="12000"/>
 			        <property name="appendNum" value="12000"/>
 			    </bean>
+			   <bean class="com.cloudbeaver.checkAndAppend.TableBeanTestConf">
+			         <property name="tableUploadUrl">
+         				<ref bean="TableUploadUrl" />
+         			</property>
+			    	<property name="tableName" value="TestTimeStamp"/>
+			    	<property name="versionColumn" value="ID"/>
+			        <property name="minVersion" value="0" />
+			        <property name="key" value="TestTimeStamp.depId=department.ID" />
+					<property name="join">
+						<list>
+							<value>department</value>
+						</list>
+					</property>
+					<property name="initNum" value="1200000"/>
+			        <property name="appendNum" value="12000"/>
+			   </bean>
          	</list>
          </property>
     </bean>

@@ -1,6 +1,7 @@
 package com.cloudbeaver.checkAndAppend;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.env.SystemEnvironmentPropertySource;
+import org.springframework.ui.context.Theme;
 
 import com.cloudbeaver.client.common.BeaverFatalException;
 import com.cloudbeaver.client.common.BeaverUtils;
@@ -44,15 +46,13 @@ public class CheckAndAppendDataTest{
 //	@Before
 //	@Ignore
 	public void setUpServers() throws ParseException{
-		logger.info("i'm here");
+		initMap();
 		System.out.println("clear old data");
 		dbDataGeneration.DBClear(checkAndAppendBean);
 		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
 		dbDataGeneration.deleteDBFile(checkAndAppendBean);
 		System.out.println("clear success!");
-
 		mockServer.start(false);
-		initMap();
 		for(DatabaseBeanTestConf dbBean : checkAndAppendBean.getDatabases()){
 			if(dbBean.isDoesAppend()){
 				AppendCountMap.put(dbBean.getDatabaseName(), dbBean.getAppendCount());
@@ -62,13 +62,27 @@ public class CheckAndAppendDataTest{
 			}
 		}
 		System.out.println("into dbinit");
+		long start=System.currentTimeMillis();
 		dbDataGeneration.DBInit(checkAndAppendBean);
+		logger.info("the DBInit tiem consuming is "+(System.currentTimeMillis()-start)+"ms");
 		System.out.println("into external process");
-		cmd=checkAndAppendBean.getCmd().split(" ");
-		ProcessBuilder pb=new ProcessBuilder(cmd);
-		path=checkAndAppendBean.getPath();
+		cmd = checkAndAppendBean.getCmd().split(" ");
+		ProcessBuilder pb = new ProcessBuilder(cmd);
+		path = checkAndAppendBean.getPath();
 		pb.directory(new File(path));
 		File log = new File(path+"/client.log");
+		if(log.exists())
+		{
+			FileWriter fileWriter;
+			try {
+				fileWriter = new FileWriter(log);
+				fileWriter.write("");
+				fileWriter.flush();
+				fileWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		pb.redirectErrorStream(true);
 		pb.redirectOutput(Redirect.appendTo(log));
 		try {
@@ -80,12 +94,13 @@ public class CheckAndAppendDataTest{
 			e.printStackTrace();
 		}
 	}
+
 	@AfterClass
 	public void tearDownServers(){
 		mockServer.stop();
-		dbDataGeneration.DBClear(checkAndAppendBean);
-		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
-		dbDataGeneration.deleteDBFile(checkAndAppendBean);
+//		dbDataGeneration.DBClear(checkAndAppendBean);
+//		dbDataGeneration.deleteLocalFile(checkAndAppendBean);
+//		dbDataGeneration.deleteDBFile(checkAndAppendBean);
 	}
 
 	public void initMap(){
@@ -104,10 +119,12 @@ public class CheckAndAppendDataTest{
 		DBDataGeneration.TestFileMap.put("SqlServerTest", "conf_test/DBSetup/SqlServerTest/");		
 		DBDataGeneration.TestFileMap.put("OracleTest", "conf_test/DBSetup/OracleTest/");
 		DBDataGeneration.TestFileMap.put("PostgresqlTest", "conf_test/DBSetup/PostgresqlTest/");
+		DBDataGeneration.TestFileMap.put("DocumentDB", "conf_test/DBSetup/SqlServerTest/");	
 		DBFileMap.put("MysqlTest", DATABASE_FILE_PREFIX + "MysqlTest/");
 		DBFileMap.put("SqlServerTest", DATABASE_FILE_PREFIX + "SqlServerTest/");
 		DBFileMap.put("OracleTest", DATABASE_FILE_PREFIX + "OracleTest/");
 		DBFileMap.put("PostgresqlTest", DATABASE_FILE_PREFIX + "PostgresqlTest/");
+		DBFileMap.put("DocumentDB", DATABASE_FILE_PREFIX + "DocumentDB/");
 	}
 
 	public boolean traverseFolder(String folderPath){
@@ -165,11 +182,9 @@ public class CheckAndAppendDataTest{
 	}
 
 	public static void main(String[] args) {
-		String path="/home/fanyan/dbsync-test/conf_test/DBSetup/SqlServerTest";
 	//	CheckAndAppendDataTest cTest = new CheckAndAppendDataTest();
 	//	cTest.start();
 	}
-
 	public void start() {
 	//	tearDownServers();
 		try {

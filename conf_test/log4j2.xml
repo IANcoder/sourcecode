@@ -4,10 +4,13 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
+    <File name="log" fileName="logs/log4j2.log" append="false">
+        <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <root level="info">
-      <AppenderRef ref="Console"/>
+      <AppenderRef ref="log"/>
     </root>
 <!--
   	<logger name="logger" level="info"  additivity="false">

@@ -438,8 +438,11 @@ public class GetTaskServlet extends HttpServlet{
 		//	+ "{\"table\":\"teacher\",\"ID\":\"0
 		//	+",\"join\":[\"department\"],\"key\":\"teacher.depId=department.ID\",\"versionColumn\":\"TOTAL_LINES_NUMBER\"},"			
 			+ "{\"table\":\"monitor\",\"ID\":\"0\",\"replaceOp\":[{\"toColumn\":\"classId\",\"fromTable\":\"class\",\"fromKey\":\"ID\",\"fromColumns\":\"classname\"}]}"
+			+ "]},"
+
+			+ "{\"db\":\"DocumentDB\",\"rowversion\":\"xgsj\",\"tables\":["
+			+ "{\"table\":\"TestTimeStamp\",\"xgsj\":\"0\"}"
 			+ "]}"
-			
 			//"
 //			+ "{\"db\":\"OracleTest\",\"rowversion\":\"ID\",\"tables\":["
 //			+ "{\"table\":\"users\",\"ID\":\"0\"},"

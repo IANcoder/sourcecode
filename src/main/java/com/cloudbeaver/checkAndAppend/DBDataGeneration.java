@@ -13,11 +13,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.logging.log4j.core.appender.rolling.action.IfAccumulatedFileCount;
+import org.apache.logging.log4j.message.LoggerNameAwareMessage;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.IllegalFormatCodePointException;
 import java.util.Map;
 import java.util.Random;
 
@@ -41,11 +44,15 @@ public class DBDataGeneration {
 	public static String ORACLE = "oracle";
 	public static String MYSQL = "mysql";
 	public static String POSTGRES = "postgres";
-	public static final String CreateTableSQL[] = {"create table department(ID integer, name varchar(50));\n",
-			"create table class(ID integer, classname varchar(20), depId integer);\n"};
-	public static final String DropTableSQL[] = {"drop table department;\n",
-			"drop table class;\n"};
-	public static final String DBDataFile[] = {"setup.sql", "tearDown.sql", "users", "student", "department", "course", "teacher", "date_test", "datetime_test", "timestamp_test", "consumer", "class", "monitor"};
+	public static final String CreateTableSQL[] = {
+			"create table department(ID integer, name varchar(50));\n",
+			"create table class(ID integer, classname varchar(20), depId integer);\n"
+			};
+	public static final String DropTableSQL[] = {
+			"drop table if exists department;\n",
+			"drop table if exists class ;\n"};
+	public static final String DBDataFile[] = {"setup.sql", "tearDown.sql", "users", "student", "department", "course", "teacher", "date_test", "datetime_test", "timestamp_test", 
+			"consumer", "class", "monitor","TestTimeStamp"};
 	public static ArrayList<Integer> WRITE_RECORD_NUMS_COURSE = new ArrayList<Integer>(); //writing record number of table course every time
 	public static ArrayList<Integer> WRITE_RECORD_NUMS_TEACHER = new ArrayList<Integer>(); //writing record number of table teacher every time
 	public static ArrayList<Integer> RECORD_NUMS = new ArrayList<Integer>(); //record number every time
@@ -324,7 +331,44 @@ public class DBDataGeneration {
 			e.printStackTrace();
 		}
 	}
-
+	public static void getTestTimeStampData(DatabaseBeanTestConf dbBean,int recordNum){
+		String fileName = TestFileMap.get(dbBean.getDatabaseName()) + "TestTimeStamp";
+    	RandomAccessFile file;
+    	File f = new File(fileName);
+    	BufferedWriter writer = null;
+		try {
+			if(!f.exists()){
+				writer = new BufferedWriter(new FileWriter(f));
+	            writer.write("ID\n");
+	            writer.write("ID,depId,xgsj\n");
+	            writer.close();
+			}
+			file = new RandomAccessFile(fileName, "rw");
+			file.seek(file.length());
+			ArrayList<String> list = new ArrayList<String>();
+			for(int i = 0; i < recordNum; i++){
+				list.add((i + MIN_ID) + "");
+			}
+			if(RECORD_NUMS.size() == 1){
+				shufflecard(list);
+			}
+			long start=0;
+			long time_stamp_insert_time=0;
+			for(int i = 0; i < recordNum; i++){
+				int depId = (int) (Math.random() * recordNum +  MIN_ID);
+				String record =list.get(i) + "," + depId+",DEFAULT";
+				file.write((record + "\n").getBytes());
+				String tempString = "insert into TestTimeStamp values(" + record + ")";
+				start=System.nanoTime();
+            	dbBean.getJdbcTemplate().execute(tempString);
+            	time_stamp_insert_time+=System.nanoTime()-start;
+			}
+			System.out.println("time stamp insert is "+(time_stamp_insert_time/1000000)+"ms");
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public static void getTeacherData(DatabaseBeanTestConf dbBean, int recordNum) {
 		String fileName = TestFileMap.get(dbBean.getDatabaseName()) + TEACHER;
     	RandomAccessFile file;
@@ -813,6 +857,13 @@ public class DBDataGeneration {
                 	endTime = System.currentTimeMillis();
                 	System.out.println("表teacher运行时间：" + (endTime - startTime)/1000 + "s, " + "条数： " + recordNum.get(TEACHER));
             	}
+            	if(dbBean.iscontainsTestTimeStamp()){
+            		dbBean.getJdbcTemplate().execute("create table TestTimeStamp(ID integer, depId integer,xgsj timestamp)");
+	            	startTime = System.currentTimeMillis();
+	            	getTestTimeStampData(dbBean, recordNum.get("testtimestamp"));
+	            	endTime = System.currentTimeMillis();
+	            	System.out.println("表TestTimeStamp运行时间：" + (endTime - startTime)/1000 + "s, " + "条数： " + recordNum.get("testtimestamp"));
+            	}
             	if(dbBean.isContainsDate()){
             		if(dbBean.getDatabaseType().equals(MYSQL)){
                 		dbBean.getJdbcTemplate().execute("create table date_test(ID date, depId integer);");
@@ -870,30 +921,33 @@ public class DBDataGeneration {
 	            	dbBean.getJdbcTemplate().execute(sql[i]);
 	        	}
 	        	if(dbBean.isContainsLong()){
-	        		dbBean.getJdbcTemplate().execute("drop table users");
-	        		dbBean.getJdbcTemplate().execute("drop table student");
+	        		dbBean.getJdbcTemplate().execute("drop table if exists users");
+	        		dbBean.getJdbcTemplate().execute("drop table if exists student");
 	        	}
 	        	if(dbBean.isContainsReplaceOp()){
-	        		dbBean.getJdbcTemplate().execute("drop table monitor");
+	        		dbBean.getJdbcTemplate().execute("drop table if exists monitor");
 	        	}
 	        	if(dbBean.isFullSync()){
-	        		dbBean.getJdbcTemplate().execute("drop table course");
-	        		dbBean.getJdbcTemplate().execute("drop table teacher");
+	        		dbBean.getJdbcTemplate().execute("drop table if exists course");
+	        		dbBean.getJdbcTemplate().execute("drop table if exists teacher");
+	        	}
+	        	if(dbBean.iscontainsTestTimeStamp()){
+	        		dbBean.getJdbcTemplate().execute("drop table if exists TestTimeStamp");
 	        	}
 	        	if(dbBean.isContainsDate()){
 	        		if(dbBean.getDatabaseType().equals(MYSQL)){
-	            		dbBean.getJdbcTemplate().execute("drop table date_test;");
-	            		dbBean.getJdbcTemplate().execute("drop table datetime_test;");
-	            		dbBean.getJdbcTemplate().execute("drop table timestamp_test;");
+	            		dbBean.getJdbcTemplate().execute("drop table if exists date_test;");
+	            		dbBean.getJdbcTemplate().execute("drop table if exists datetime_test;");
+	            		dbBean.getJdbcTemplate().execute("drop table if exists timestamp_test;");
 	            	} else if(dbBean.getDatabaseType().equals(SQLSERVER)){
-	            		dbBean.getJdbcTemplate().execute("drop table datetime_test;");
+	            		dbBean.getJdbcTemplate().execute("drop table if exists datetime_test;");
 	            	} else if(dbBean.getDatabaseType().equals(ORACLE) || dbBean.getDatabaseType().equals(POSTGRES)){
-	            		dbBean.getJdbcTemplate().execute("drop table date_test");
-	            		dbBean.getJdbcTemplate().execute("drop table timestamp_test");
+	            		dbBean.getJdbcTemplate().execute("drop table if exists date_test");
+	            		dbBean.getJdbcTemplate().execute("drop table if exists timestamp_test");
 	            	}
 	        	}
 	        	if(dbBean.isContainsLongText()){
-	        		dbBean.getJdbcTemplate().execute("drop table consumer");
+	        		dbBean.getJdbcTemplate().execute("drop table if exists consumer");
 	        	}
 	        }
 	    }
@@ -951,6 +1005,9 @@ public class DBDataGeneration {
         	if(dbBean.isFullSync()){
         		getCourseData(dbBean, recordNum.get(COURSE));
             	getTeacherData(dbBean, recordNum.get(TEACHER));
+        	}
+        	if(dbBean.iscontainsTestTimeStamp()){
+        		getTestTimeStampData(dbBean, recordNum.get("testtimestamp"));
         	}
         	if(dbBean.isContainsDate()){
         		if(dbBean.getDatabaseType().equals(MYSQL)){

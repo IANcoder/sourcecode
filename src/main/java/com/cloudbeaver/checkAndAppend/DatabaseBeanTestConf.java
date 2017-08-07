@@ -21,11 +21,20 @@ public class DatabaseBeanTestConf implements Serializable, InitializingBean{
     boolean FullSync;//是否包含NoVersionColumn类型表
     boolean doesAppend;//是否追加数据
     int appendCount;//追加次数
-
+    boolean containsTestTimeStamp;//是否包含新建测试表
     public boolean isContainsSubTable() {
 		return containsSubTable;
 	}
-
+    public boolean iscontainsTestTimeStamp()
+    {
+    	return containsTestTimeStamp;
+    }
+    public void setContainsTestTimeStamp(boolean containsTestTimeStamp){
+    	this.containsTestTimeStamp=containsTestTimeStamp;
+    }
+    public boolean getContainsTestTimeStamp(){
+    	return containsTestTimeStamp;
+    }
 	public void setContainsSubTable(boolean containsSubTable) {
 		this.containsSubTable = containsSubTable;
 	}

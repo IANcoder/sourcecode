@@ -155,7 +155,6 @@ public class PostDataServlet extends HttpServlet{
     		String dbName = null;
     		String tName = null;
     		JSONArray newjArray = JSONArray.fromObject(content);
-
     		Map<String, String> DBName2DBType = GetTaskServlet.map;
     		if(!content.contains("HeartBeat")){
     			if(newjArray.size()>0){
@@ -163,9 +162,9 @@ public class PostDataServlet extends HttpServlet{
     				dbName = record.getString(DATABASE_NAME);
     				tName = record.getString(TABLE_NAME);
     			}
-    			System.out.println("dbName = " + dbName);
+    			//System.out.println("dbName = " + dbName);
     			Assert.assertTrue("this database or file doesn't exists", DBName2DBType.containsKey(dbName));
-
+    			logger.info("doPost get data, tableName:" + tName + " dataNum:" + newjArray.size());
     			//write data to local
     	    	String fileName = DATABASE_FILE_PREFIX  + dbName + "/" + dbName + "_" + tName;
     	    	RandomAccessFile file = new RandomAccessFile(fileName, "rw");

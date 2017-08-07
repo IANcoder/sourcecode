@@ -1,6 +1,0 @@
-2017-07-14 20:18:30 [main] INFO  com.cloudbeaver.client.b.a(line-690) 0     - starting dbUploader
-2017-07-14 20:18:30 [Thread-0] INFO  com.cloudbeaver.client.a.g(line-47) 9     - start thread pool, task:upload_db_data
-2017-07-14 20:18:30 [Thread-0] INFO  com.cloudbeaver.client.a.e(line-268) 12    - conf_name:/home/fanyan/dbsync-test/conf/SyncClient_DB.properties
-2017-07-14 20:18:30 [Thread-0] FATAL com.cloudbeaver.client.b.a(line-84) 13    - load config failed, please restart process. confName:conf/SyncClient_DB.properties msg:conf/SyncClient_DB.properties (没有那个文件或目录)
-2017-07-14 20:18:30 [Thread-0] FATAL com.cloudbeaver.client.a.g(line-61) 14    - get fatal error when setup thread pool, process will exit. msg:load config failed, please restart process. confName:conf/SyncClient_DB.properties msg:conf/SyncClient_DB.properties (没有那个文件或目录)
-2017-07-17 14:49:00 [main] FATAL com.cloudbeaver.App(line-157) 0     - command line is wrong, msg:Missing required options: m, n

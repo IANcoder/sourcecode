@@ -17,14 +17,14 @@ public class CheckAndAppendTestConf implements InitializingBean{
 	}
 	public void setCmd(String cmd)
 	{
-		this.cmd=cmd;
+		this.cmd = cmd;
 	}
 	public String getCmd()
 	{
 		return cmd;
 	}
     public void setPath(String path){
-    	Path=path;
+    	Path = path;
     }
     public String getPath()
     {

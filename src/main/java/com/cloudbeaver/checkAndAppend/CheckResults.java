@@ -16,7 +16,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.message.LoggerNameAwareMessage;
 import org.junit.Assert;
+import org.springframework.ui.context.Theme;
 
 import com.cloudbeaver.client.common.BeaverFatalException;
 
@@ -27,7 +30,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class CheckResults {
-	protected org.apache.logging.log4j.Logger logger = LogManager.getLogger("logger");
+	protected static org.apache.logging.log4j.Logger logger = LogManager.getLogger("logger");
 	public static final String DATABASE_FILE_PREFIX = "/tmp/db/";
 	public static String VERSION_COLUMN_OFFSET = null;
 	public static final String RECORD = "record";
@@ -37,6 +40,8 @@ public class CheckResults {
 	public static String POSTGRES = "postgres";
 	public static final String FULL_SCAN_VERSION_COLUMN = "TOTAL_LINES_NUMBER";
 	public static long EIGHT_HOURS = 8 * 3600;
+	public static long whole_time_cost=0;
+	public static long part_time_cost=0;
 	public static ArrayList<String> StringTable = new ArrayList<String>();
 	{
 		StringTable.add("consumer");
@@ -47,6 +52,8 @@ public class CheckResults {
     	for(int j=0;j<tables.size();j++)
     	{
     		TableBeanTestConf tableBean = tables.get(j);
+    		if(!tableBean.getTableName().equals("TestTimeStamp"))
+    			continue;
     		if(tableBean.getTableName().equals("course")||tableBean.getTableName().equals("teacher")||tableBean.getTableName().equals("datetime_test")||tableBean.getTableName().equals("consumer"))
     			continue;
     		if(isNewVersion){
@@ -83,8 +90,8 @@ public class CheckResults {
     			JSONArray dbArray = readDataFile(dbBean.getDatabaseType(), tableBean.getTableName(), DBDataGeneration.TestFileMap.get(dbBean.getDatabaseName()) + tableBean.getTableName());
     			if(dbArray.size() != fileArray.size()){
     				logger.info("Database: " + dbBean.getDatabaseName() + ", Table: " + tableBean.getTableName() + ". Record num in file is not equal to that in DB");
+    				logger.warn("db size is "+dbArray.size()+"AND file array size is "+fileArray.size());
     				throw new BeaverFatalException("Record num in file is not equal to that in DB");
-//    				continue;
     			}
     			long startTime = System.currentTimeMillis();
     			if(!versionColumn.equals(FULL_SCAN_VERSION_COLUMN)){
@@ -116,6 +123,7 @@ public class CheckResults {
             	System.out.println("compare versionColumnValue：" + (endTime - startTime)/1000 + "s");
     		}
     	}
+    	print_time();
     }
 
 	public void checkDBContent(boolean isNewVersion, DatabaseBean dbBean) throws SQLException, BeaverFatalException{
@@ -196,7 +204,11 @@ public class CheckResults {
     	}
     	return true;
     }
-
+	public void print_time(){
+		System.out.println("the whole time is "+whole_time_cost);
+		System.out.println("the part time is "+part_time_cost);
+		System.out.println("the ratio is "+(double)part_time_cost/whole_time_cost);
+	}
 	public static JSONArray readJsonFile(String dbType, String tableName, String fileName){
 		System.out.println("file name is "+fileName);
     	File file = new File(fileName);
@@ -213,15 +225,18 @@ public class CheckResults {
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
             System.out.println("column offset is "+VERSION_COLUMN_OFFSET);
+            long tmp_time=System.nanoTime();
             while ((tempString = reader.readLine()) != null) {
+            	long part_tmp_time=System.nanoTime();
             	JSONObject jsonObj = new JSONObject();
             	String subStr = tempString.substring(tempString.indexOf(VERSION_COLUMN_OFFSET));
             	String value = subStr.substring(VERSION_COLUMN_OFFSET.length() + 3, subStr.indexOf(",") - 1);
             	jsonObj.put(VERSION_COLUMN_OFFSET, value);
-            	jsonObj.put(RECORD, tempString);
+            //	jsonObj.put(RECORD, tempString);
             	jArray.add(jsonObj);
+            	part_time_cost+=System.nanoTime()-part_tmp_time;
             }
-
+            whole_time_cost+=System.nanoTime()-tmp_time;
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -235,7 +250,7 @@ public class CheckResults {
         }
 
         long endTime = System.currentTimeMillis();
-    	System.out.println("read data get from db：" + (endTime - startTime)/1000 + "s");
+    	logger.info("read data get from /tmp/db：" + (endTime - startTime) + "ms");
 
         if(jArray.size() == 0){
         	return null;
@@ -243,8 +258,8 @@ public class CheckResults {
         	startTime = System.currentTimeMillis();
         	sortJSONArray(dbType, tableName, jArray);
         	endTime = System.currentTimeMillis();
-        	System.out.println("sort jsonArray：" + (endTime - startTime)/1000 + "s");
-
+        	//System.out.println("read /tmp/db file ,sort jsonArray：" + (endTime - startTime) + "ms");
+        	logger.info("read /tmp/db/testtimestamp file ,sort jsonArray：" + (endTime - startTime) + "ms");
         	return jArray;
         }   
     }
@@ -284,18 +299,18 @@ public class CheckResults {
             			jsonObj.put(VERSION_COLUMN_OFFSET, value);
             		}
             	}
-            	jsonObj.put(RECORD, tempString);
+            //	jsonObj.put(RECORD, tempString);
             	jArray.add(jsonObj);
             }
             reader.close();
             long endTime = System.currentTimeMillis();
-        	System.out.println("read origin db file：" + (endTime - startTime)/1000 + "s");
+        	logger.info("in conf_test read origin db file in conf_test：" + (endTime - startTime) + "ms");
 
             if(!versionColumn.equals(FULL_SCAN_VERSION_COLUMN)){
             	startTime = System.currentTimeMillis();
             	sortJSONArray(dbType, tableName, jArray);
             	endTime = System.currentTimeMillis();
-            	System.out.println("sort jsonArray：" + (endTime - startTime)/1000 + "s");
+            	logger.info("in conf_test sort jsonArray：" + (endTime - startTime)/1000 + "s");
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
@@ -309,7 +324,6 @@ public class CheckResults {
         }
         return jArray;
     }
-
 	public static void sortJSONArray(String dbType, String tableName, JSONArray jArray) {
 		List<JSONObject> jsonValues = new ArrayList<JSONObject>();
 	    for (int i = 0; i < jArray.size(); i++) {
