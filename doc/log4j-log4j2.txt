@@ -1,0 +1,8 @@
+ThreadNum:100
+Info OutPut times for each thread:50000
+Appender:RollingFile
+log4j2:
+	sync 91 ms async 225 ms
+log4j
+	sync 89 ms async 89 ms
+
